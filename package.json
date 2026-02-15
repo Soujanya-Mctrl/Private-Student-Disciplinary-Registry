@@ -5,13 +5,13 @@
   "type": "module",
   "workspaces": [
     "counter-cli",
-    "counter-contract",
+    "disciplinary-contract",
     "frontend-vite-react"
   ],
   "scripts": {
     "compact": "turbo run compact",
     "build": "turbo run build",
-    "build-production": "git lfs pull && cd counter-contract && npm run build && cd ../frontend-vite-react && npm run build",    
+    "build-production": "git lfs pull && cd disciplinary-contract && npm run build && cd ../frontend-vite-react && npm run build",    
     "setup-standalone": "cd counter-cli && npm run setup-undeployed",
     "dev:frontend": "cd frontend-vite-react && npm run dev",    
     "lint": "turbo run lint"     

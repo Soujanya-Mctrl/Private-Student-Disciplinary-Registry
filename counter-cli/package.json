@@ -35,6 +35,6 @@
     "wallet-testing": "vitest run src/test/wallet.test.ts"
   },
   "dependencies": {    
-    "@eddalabs/counter-contract": "*"    
+    "@eddalabs/disciplinary-record-contract": "*"    
   }
 }

@@ -66,7 +66,10 @@ This smart contract enables:
 
 ## 🚀 Deployed Smart Contract
 
-**Contract Name:** `registry.compact`
+**Contract Name:** `disciplinary.compact`  
+**Source File:** [`src/disciplinary.compact`](file:///d:/Projects/Midnight-full-stack/midnight-starter-template-windows/disciplinary-contract/src/disciplinary.compact)  
+**Contract Address:** `47e5aa756ebb75df1fa5feb6af40d0ac5ce24ef2fe683cfa7e467b3ee6d06585`  
+**Network:** `undeployed` (local)
 
 > This contract is deployed on the Midnight network and demonstrates a minimal implementation of a privacy-preserving student disciplinary registry.
 

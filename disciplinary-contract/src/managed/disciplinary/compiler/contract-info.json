@@ -1,0 +1,58 @@
+{
+  "circuits": [
+    {
+      "name": "registerStudent",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "studentId",
+          "type": {
+            "type-name": "Field"
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "addDisciplinaryAction",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "studentId",
+          "type": {
+            "type-name": "Field"
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "verifyRecord",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "studentId",
+          "type": {
+            "type-name": "Field"
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Uint",
+        "maxval": 18446744073709551615
+      }
+    }
+  ],
+  "witnesses": [
+  ],
+  "contracts": [
+  ]
+}

@@ -1,0 +1,23 @@
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+export ledger totalStudents: Counter;
+export ledger accounts: Map<Field, Uint<64>>;
+
+export circuit registerStudent(studentId: Field): [] {
+  totalStudents.increment(1);
+  accounts.insert(disclose(studentId), 0 as Uint<64>);
+}
+
+export circuit addDisciplinaryAction(studentId: Field): [] {
+  const disclosed_studentId = disclose(studentId);
+  const current = accounts.lookup(disclosed_studentId);
+  if (current < 1000) {
+    accounts.insert(disclosed_studentId, (current + 1) as Uint<64>);
+  }
+}
+
+export circuit verifyRecord(studentId: Field): Uint<64> {
+  return accounts.lookup(disclose(studentId));
+}

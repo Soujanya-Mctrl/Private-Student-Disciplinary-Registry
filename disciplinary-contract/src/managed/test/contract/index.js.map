@@ -1,0 +1,8 @@
+{
+  "version": 3,
+  "file": "index.js",
+  "sourceRoot": "../../../../",
+  "sources": ["src/test.compact"],
+  "names": [],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;EAAA;;;;;;;;;;MAKA,AAAA,IAEC;;;;;cAFmB,GAAQ;cAAE,GAAQ;;;;;;;;;;;;;;;;;;;;;;;;;yCAAlB,GAAQ,+BAAE,GAAQ;;;;;;;iEAAlB,GAAQ,EAAE,GAAQ;;;OAErC;;;GACA;EARD;;;;;;;;;;;;;;;;;;;;;;;;;;IAGA;;;;;;;;;;yEAAyC;;;;;;;GAKxC;EAHD,AAAA,OAEC,4BAFmB,GAAQ,EAAE,GAAQ;IACpC;;;;;;;;;;2HAAwB,GAAC;;;2HAAY,GAAC;;;wEAA/B;;GACR;;;;;;;;;;;;;;;;IAJD;;;;;uCAAA;;;;;;;;;;;;;;;;4GAAyC;;;;;;uCAAzC;;;;;;;;;;;;4GAAyC;;;;;;;;;;;;;;uCAAzC;;;;;;;;;;;;;;;4GAAyC;;;;;;;;;;;;;;uCAAzC;;;;;;;;;;;;;;;;;4GAAyC;;;;;;;;;KAAA;;;;;;;;;;"
+}

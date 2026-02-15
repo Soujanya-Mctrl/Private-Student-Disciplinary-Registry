@@ -1,0 +1,8 @@
+{
+  "version": 3,
+  "file": "index.js",
+  "sourceRoot": "../../../../",
+  "sources": ["src/disciplinary.compact"],
+  "names": [],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;EAAA;;;;;;;;;;MAOA,AAAA,eAGC;;;;;cAH8B,WAAgB;;;;;;;;;;;;;;;;;;yCAAhB,WAAgB;;;;;;;;;iDAAhB,WAAgB;;;OAG9C;MAED,AAAA,qBAMC;;;;;cANoC,WAAgB;;;;;;;;;;;;;;;;;;yCAAhB,WAAgB;;;;;;;;;uDAAhB,WAAgB;;;OAMpD;MAED,AAAA,YAEC;;;;;cAF2B,WAAgB;;;;;;;;;;;;;;;;;;yCAAhB,WAAgB;;;;;;;;;8CAAhB,WAAgB;;;OAE3C;;;;;;;GACA;EAvBD;;;;;;;;;;;;;;;;;;;;;;;;;;;;;IAIA;;;;;;;;;yEAAqC;IACrC;;;;;;;;;;yEAA6C;;;;;;;GAkB5C;EAhBD,AAAA,kBAGC,4BAH8B,WAAgB;UAC7C,KAAa;IAAb;;;;;;;;;;6FAAA,KAAa;;;;wEAAA;UACb,KAAQ;IAAR;;;;;;;;;;2HAAyB,WAAS;;;2HAAlC,KAAQ;;;wEAAA;;GACT;EAED,AAAA,wBAMC,4BANoC,WAAgB;UAC7C,qBAAyC,GAAV,WAAS;UACxC,SAA8C,2BAApC;;;;;;;;;;;;;;yIAAgB,qBAAmB;;;mHAA3B;QACpB,SAAO;YACT,KAAQ;;;;;uBAA8B,SAAO;MAA7C;;;;;;;;;;6HAAgB,qBAAmB;;;6HAAnC,KAAQ;;;0EAAA;;;GAEX;EAED,AAAA,eAEC,4BAF2B,WAAgB;mCACnC;;;;;;;;;;;;;;8HAAyB,WAAS;;;wGAA1B;GAChB;;;;;;;;;;;;;;;;IAlBD;qCAAA;;;;;;;;;;;0GAAqC;KAAA;IACrC;;;;;uCAAA;;;;;;;;;;;;;;;;4GAA6C;;;;;;uCAA7C;;;;;;;;;;;;4GAA6C;;;;;;;;;;;;;;uCAA7C;;;;;;;;;;;;;;;4GAA6C;;;;;;;;;;;;;;uCAA7C;;;;;;;;;;;;;;;;;4GAA6C;;;;;;;;;KAAA;;;;;;;;;;"
+}

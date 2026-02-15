@@ -1,8 +1,9 @@
-
 import path from 'path';
 import fs from 'fs';
+import * as readline from 'node:readline/promises';
+import { stdin as input, stdout as output } from 'node:process';
 import * as api from './api';
-import { currentDir, UndeployedConfig } from './config';
+import { currentDir, UndeployedConfig, PreprodConfig, PreviewConfig, Config } from './config';
 import { createLogger } from './logger';
 import { createPrivateState } from '@eddalabs/disciplinary-record-contract';
 
@@ -13,38 +14,67 @@ const logger = await createLogger(logDir);
 const GENESIS_MINT_WALLET_SEED = '0000000000000000000000000000000000000000000000000000000000000001';
 
 async function deploy() {
-  logger.info('Starting deployment to persistent local network...');
-  api.setLogger(logger);
+  const rl = readline.createInterface({ input, output });
+  
+  console.log('\n🚀 Midnight Student Registry Deployment\n');
+  
+  // 1. Choose Network
+  const networkArg = process.argv[2]?.toLowerCase() || 'local';
+  let config: Config;
+  let networkName: string;
 
-  // 1. Configure for Local Network (UndeployedConfig has fixed ports)
-  const config = new UndeployedConfig();
+  if (networkArg === 'preprod') {
+    config = new PreprodConfig();
+    networkName = 'preprod';
+  } else if (networkArg === 'preview') {
+    config = new PreviewConfig();
+    networkName = 'preview';
+  } else {
+    config = new UndeployedConfig();
+    networkName = 'local';
+  }
+
+  logger.info(`Target Network: ${networkName}`);
   logger.info(`Connecting to node at ${config.node}`);
 
-  // 2. Initialize Wallet with Genesis Seed (already funded)
-  const walletContext = await api.buildWalletAndWaitForFunds(config, GENESIS_MINT_WALLET_SEED);
+  // 2. Resolve Seed
+  let seed = GENESIS_MINT_WALLET_SEED;
+  const customSeed = await rl.question('Enter your Hex Seed (32-byte hex string) [Leave blank for default]: ');
+  if (customSeed.trim()) {
+    seed = customSeed.trim();
+  } else {
+    console.log(`Using genesis seed: ${seed}`);
+  }
+  rl.close();
+
+  api.setLogger(logger);
+
+  // 3. Initialize Wallet
+  const walletContext = await api.buildWalletAndWaitForFunds(config, seed);
   const providers = await api.configureProviders(walletContext, config);
 
-  // 3. Deploy Contract
+  // 4. Deploy Contract
   logger.info('Deploying contract...');
   const contract = await api.deploy(providers, createPrivateState()); 
   const address = contract.deployTxData.public.contractAddress;
   
   logger.info(`Contract deployed at: ${address}`);
 
-  // 4. Write deployment.json
+  // 5. Write deployment.json
   const deploymentPath = path.resolve(currentDir, '..', '..', 'disciplinary-contract', 'deployment.json');
   const deploymentData = {
     contractAddress: address,
-    network: 'local', // Mark as local
+    network: networkName,
     deployedAt: new Date().toISOString(),
   };
 
   fs.writeFileSync(deploymentPath, JSON.stringify(deploymentData, null, 2));
   logger.info(`Wrote deployment info to ${deploymentPath}`);
   
-  console.log('\nDeployment Successful!');
+  console.log('\n✅ Deployment Successful!');
+  console.log('Network:', networkName);
   console.log('Contract Address:', address);
-  console.log('Update your frontend .env file with this address if it changed.');
+  console.log('Update your frontend .env file with this address.');
 
   // Close wallet before exiting
   await api.closeWallet(walletContext);

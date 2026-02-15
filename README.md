@@ -53,7 +53,7 @@ The repository is organized as a monorepo for seamless full-stack dev-to-deploy 
 │   │   ├── disciplinary-sdk/ # Custom SDK layer for ZK interactions
 │   │   └── wallet-widget/    # Midnight wallet integration components
 │   └── src/pages/             # UI Views (Dashboard, Records, Registration)
-├── counter-cli/              # Deployment & test script runner
+├── disciplinary-cli/         # Deployment & test script runner
 └── public/screenshots/       # Project visual documentation
 ```
 
@@ -110,9 +110,21 @@ The Records dashboard allows administrators to query a student's ID and retrieve
 
 ## 🚀 Getting Started
 
-1.  **Install Midnight Lace Wallet**: Required to sign ZK transactions.
+1.  **Install Midnight Lace Wallet**: Required to sign ZK transactions in the browser.
 2.  **Enter Demo Mode**: If you don't have a testnet wallet, use the "Demo Mode" toggle in the app to see the simulated ZK flows.
 3.  **Register a Student**: Start by creating a private commitment on the Registration page.
+
+### ⛓️ Deploying to Testnet (Preprod)
+
+To deploy the registry to the real Midnight Preprod network:
+
+1.  **Run Deployment Script**:
+    ```bash
+    npm run deploy-preprod
+    ```
+2.  **Enter Hex Seed**: When prompted, enter the hex seed for your funded testnet wallet.
+3.  **Fund Your Wallet**: Ensure your unshielded address has `tNight` from the [Preprod Faucet](https://faucet.preprod.midnight.network/).
+4.  **Update Frontend**: Copy the resulting contract address into your frontend `.env` file.
 
 ---
 

@@ -78,7 +78,7 @@ type DisciplinaryCircuits = ImpureCircuitId<Contract<DisciplinaryPrivateState>>;
 const DisciplinaryPrivateStateId = 'disciplinaryPrivateState' as const;
 
 // ---------------------------------------------------------------------------
-// Helpers (adapted from counter-cli/src/api.ts)
+// Helpers (adapted from disciplinary-cli/src/api.ts)
 // ---------------------------------------------------------------------------
 const frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
 

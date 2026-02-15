@@ -84,7 +84,7 @@ The `disciplinary.compact` contract is the backbone of the registry. It defines 
 
 *   **Contract Name:** `disciplinary.compact`
 *   **Source File:** [`disciplinary-contract/src/disciplinary.compact`](./disciplinary-contract/src/disciplinary.compact)
-*   **Contract Address:** `47e5aa756ebb75df1fa5feb6af40d0ac5ce24ef2fe683cfa7e467b3ee6d06585`
+*   **Contract Address:** `f21d9e2e8383b934b2baa52e558b96e213119ed91f8914b33f7c04b9c25a8678`
 *   **Network:** Midnight Testnet (Local / Dev)
 
 ---

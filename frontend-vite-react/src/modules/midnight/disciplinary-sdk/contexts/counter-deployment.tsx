@@ -4,7 +4,7 @@ import { type Logger } from 'pino';
 
 import type { DeployedAPIProvider } from './counter-deployment-class';
 import { useLocalState } from '../hooks/use-localStorage';
-import { DeployedTemplateManager } from './counter-deployment-class';
+import { DeployedDisciplinaryManager } from './counter-deployment-class';
 
 import { ContractAddress } from '@midnight-ntwrk/compact-runtime';
 import { useProviders } from '../hooks/use-providers';
@@ -20,7 +20,7 @@ export const DeployedProvider = ({ logger, contractAddress, children }: Deployed
   const localState = useLocalState();
   const providers = useProviders();
   const manager = useMemo(() => {
-    return new DeployedTemplateManager(logger, localState, contractAddress, providers?.providers);
+    return new DeployedDisciplinaryManager(logger, localState, contractAddress, providers?.providers);
   }, [logger, localState, providers?.providers]);
 
   return (

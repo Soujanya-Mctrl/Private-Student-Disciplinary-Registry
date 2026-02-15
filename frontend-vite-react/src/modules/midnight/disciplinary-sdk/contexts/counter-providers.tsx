@@ -13,12 +13,11 @@ import { indexerPublicDataProvider } from "@midnight-ntwrk/midnight-js-indexer-p
 // import { levelPrivateStateProvider } from "@midnight-ntwrk/midnight-js-level-private-state-provider";
 import { Logger } from "pino";
 import type {
-  CounterCircuits,
-  CounterPrivateStateId,
+  DisciplinaryCircuits,
+  DisciplinaryPrivateStateId,
 } from "../api/common-types";
-import { CounterProviders } from "../api/common-types";
+import { DisciplinaryProviders } from "../api/common-types";
 import { useWallet } from "../../wallet-widget/hooks/useWallet";
-// import { WrappedPrivateStateProvider } from "../../wallet-widget/utils/providersWrappers/privateStateProvider";
 import {
   ActionMessages,
   ProviderAction,
@@ -30,20 +29,20 @@ import {
   proofClient,
 } from "../../wallet-widget/utils/providersWrappers/proofClient";
 import { inMemoryPrivateStateProvider } from "../../wallet-widget/utils/customImplementations/in-memory-private-state-provider";
-import { CounterPrivateState } from "@eddalabs/counter-contract";
+import { DisciplinaryRecordPrivateState } from "@eddalabs/disciplinary-record-contract";
 import {
   fromHex,
   toHex,
 } from "@midnight-ntwrk/compact-runtime";
 
 export interface ProvidersState {
-  privateStateProvider: PrivateStateProvider<typeof CounterPrivateStateId>;
-  zkConfigProvider?: ZKConfigProvider<CounterCircuits>;
+  privateStateProvider: PrivateStateProvider<typeof DisciplinaryPrivateStateId>;
+  zkConfigProvider?: ZKConfigProvider<DisciplinaryCircuits>;
   proofProvider: ProofProvider;
   publicDataProvider?: PublicDataProvider;
   walletProvider?: WalletProvider;
   midnightProvider?: MidnightProvider;
-  providers?: CounterProviders;
+  providers?: DisciplinaryProviders;
   flowMessage?: string;
 }
 
@@ -82,16 +81,10 @@ export const Provider = ({ children, logger }: ProviderProps) => {
   );
 
   const privateStateProvider: PrivateStateProvider<
-    typeof CounterPrivateStateId
+    typeof DisciplinaryPrivateStateId
   > = useMemo(
     () =>
-      // new WrappedPrivateStateProvider(
-      //   levelPrivateStateProvider({
-      //     privateStateStoreName: "counter-private-state",
-      //   }),
-      //   logger
-      // ),
-      inMemoryPrivateStateProvider<string, CounterPrivateState>(),
+      inMemoryPrivateStateProvider<string, DisciplinaryRecordPrivateState>(),
     [logger, status]
   );
 
@@ -112,11 +105,10 @@ export const Provider = ({ children, logger }: ProviderProps) => {
 
   const zkConfigProvider = useMemo(() => {
     if (typeof window === "undefined") {
-      // Return undefined (or an appropriate fallback) if running on the server.
       return undefined;
     }
-    return new CachedFetchZkConfigProvider<CounterCircuits>(
-      `${window.location.origin}/midnight/counter`,
+    return new CachedFetchZkConfigProvider<DisciplinaryCircuits>(
+      `${window.location.origin}/midnight/disciplinary`,
       fetch.bind(window),
       () => {}
     );
@@ -215,7 +207,6 @@ export const Provider = ({ children, logger }: ProviderProps) => {
       zkConfigProvider,
       walletProvider,
       midnightProvider,
-      // Only set the nested providers object if publicDataProvider (and others, if needed) are defined.
       providers:
         publicDataProvider && zkConfigProvider
           ? {

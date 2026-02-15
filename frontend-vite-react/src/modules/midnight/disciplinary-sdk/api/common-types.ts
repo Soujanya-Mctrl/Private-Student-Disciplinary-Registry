@@ -31,10 +31,3 @@ export const emptyState: DerivedState = {
   privateState: createPrivateState(),
   turns: { register: undefined, addAction: undefined, verify: undefined },
 };
-
-// Legacy types to satisfy existing CLI/Tests
-export type CounterProviders = any;
-export type DeployedCounterContract = any;
-export type CounterContract = any;
-export type CounterCircuits = any;
-export const CounterPrivateStateId = 'counterPrivateState';

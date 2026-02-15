@@ -1,6 +1,6 @@
 import {
-  type CounterProviders,
-  CounterPrivateStateId,
+  type DisciplinaryProviders,
+  DisciplinaryPrivateStateId,
 } from "../api/common-types";
 import { type ContractAddress } from "@midnight-ntwrk/compact-runtime";
 import { BehaviorSubject } from "rxjs";
@@ -43,12 +43,12 @@ export interface DeployedAPIProvider {
   readonly deployContract: () => Promise<ContractFollow>;
 }
 
-export class DeployedTemplateManager implements DeployedAPIProvider {
+export class DeployedDisciplinaryManager implements DeployedAPIProvider {
   constructor(
     private readonly logger: Logger,
     private readonly localState: LocalStorageProps,    
     private readonly contractAddress: ContractAddress,
-    private readonly providers?: CounterProviders
+    private readonly providers?: DisciplinaryProviders
   ) {}
 
   joinContract(): ContractFollow {
@@ -82,11 +82,10 @@ export class DeployedTemplateManager implements DeployedAPIProvider {
     try {
       if (this.providers) {
         const api = await ContractController.deploy(
-          CounterPrivateStateId,
+          DisciplinaryPrivateStateId,
           this.providers,
           this.logger
         );
-        // this.localState.setContractPrivateId(CounterPrivateStateId, api.deployedContractAddress);
         this.localState.addContract(api.deployedContractAddress);
 
         deployment.next({
@@ -117,14 +116,8 @@ export class DeployedTemplateManager implements DeployedAPIProvider {
   ): Promise<void> {
     try {
       if (this.providers) {
-        // const item = this.localState.getContractPrivateId(contractAddress);
-
-        // if (item != null) {
-        // } else {
-        //   this.localState.setContractPrivateId(CounterPrivateStateId, contractAddress);
-        // }
         const api = await ContractController.join(
-          CounterPrivateStateId,
+          DisciplinaryPrivateStateId,
           this.providers,
           contractAddress,
           this.logger

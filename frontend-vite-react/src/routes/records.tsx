@@ -2,12 +2,12 @@ import { createFileRoute } from '@tanstack/react-router';
 import { lazy, Suspense } from 'react';
 import { Loading } from '@/components/loading';
 
-const WalletUI = lazy(() => import('@/pages/wallet-ui').then(m => ({ default: m.WalletUI })));
+const Records = lazy(() => import('@/pages/records').then(m => ({ default: m.Records })));
 
-export const Route = createFileRoute('/wallet-ui')({
+export const Route = createFileRoute('/records')({
   component: () => (
     <Suspense fallback={<Loading />}>
-      <WalletUI />
+      <Records />
     </Suspense>
   ),
 });

@@ -60,3 +60,6 @@ jspm_packages/
 frontend-vite-react/public/midnight/
 
 .env
+.agents
+.agent
+project_status.md

@@ -1,6 +1,5 @@
 {
-  "contractAddress": "47e5aa756ebb75df1fa5feb6af40d0ac5ce24ef2fe683cfa7e467b3ee6d06585",
-  "network": "undeployed",
-  "deployedAt": "2026-02-15T06:52:44.441Z",
-  "seed": "04be716987f9aaad271d9fe10f1d2c6f4fce4b7d2e0a4a096702e24453593a02"
+  "contractAddress": "7caae11165089ab3c69bfb6d0fc644580120823a44e42ced7c1780513364a0d6",
+  "network": "local",
+  "deployedAt": "2026-02-15T12:14:07.968Z"
 }

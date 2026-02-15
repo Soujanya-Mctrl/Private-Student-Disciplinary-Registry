@@ -2,7 +2,7 @@ import { createRootRoute, Outlet } from '@tanstack/react-router';
 import * as pino from "pino";
 import { ThemeProvider } from "@/components/theme-provider";
 import { MidnightMeshProvider } from "@/modules/midnight/wallet-widget/contexts/wallet";
-import { CounterAppProvider } from "@/modules/midnight/counter-sdk/contexts";
+import { DisciplinaryAppProvider } from '../modules/midnight/disciplinary-sdk/contexts';
 import { MainLayout } from "@/layouts/layout";
 
 export const logger = pino.pino({
@@ -20,11 +20,11 @@ function RootComponent() {
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <MidnightMeshProvider logger={logger}>
-        <CounterAppProvider logger={logger} contractAddress={contractAddress}>
+        <DisciplinaryAppProvider logger={logger} contractAddress={contractAddress}>
           <MainLayout>
             <Outlet />
           </MainLayout>          
-        </CounterAppProvider>
+        </DisciplinaryAppProvider>
       </MidnightMeshProvider>
     </ThemeProvider>
   );

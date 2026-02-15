@@ -1,0 +1,31 @@
+
+> @eddalabs/counter-cli@0.1.0 deploy-local
+> node --experimental-specifier-resolution=node --loader ts-node/esm src/deploy.ts
+
+(node:20436) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+--import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));'
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20436) [DEP0180] DeprecationWarning: fs.Stats constructor is deprecated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+node:internal/fs/promises:855
+  return await PromisePrototypeThen(
+         ^
+
+Error: ENOENT: no such file or directory, mkdir 'D:\D:\Projects\Midnight-full-stack\midnight-starter-template-windows\counter-cli\logs\deploy'
+    at async Module.mkdir (node:internal/fs/promises:855:10)
+    at async createLogger (file:///D:/Projects/Midnight-full-stack/midnight-starter-template-windows/counter-cli/src/logger.ts:7:5)
+    at async file:///D:/Projects/Midnight-full-stack/midnight-starter-template-windows/counter-cli/src/deploy.ts:9:16 {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'mkdir',
+  path: 'D:\\D:\\Projects\\Midnight-full-stack\\midnight-starter-template-windows\\counter-cli\\logs\\deploy'
+}
+
+Node.js v22.22.0
+npm error Lifecycle script `deploy-local` failed with error:
+npm error code 1
+npm error path D:\Projects\Midnight-full-stack\midnight-starter-template-windows\counter-cli
+npm error workspace @eddalabs/counter-cli@0.1.0
+npm error location D:\Projects\Midnight-full-stack\midnight-starter-template-windows\counter-cli
+npm error command failed
+npm error command C:\WINDOWS\system32\cmd.exe /d /s /c node --experimental-specifier-resolution=node --loader ts-node/esm src/deploy.ts

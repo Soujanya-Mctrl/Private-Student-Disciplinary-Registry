@@ -14,5 +14,6 @@
     "declaration": true,
     "isolatedModules": true
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["src/managed/test/**/*"]
 }

@@ -1,129 +1,136 @@
-# 🎓 Private Student Disciplinary Registry
+# 🎓 Private Student Disciplinary Registry (SDR)
 
-> A privacy-focused smart contract that allows schools to record disciplinary actions on-chain with selective disclosure — ensuring transparency without exposing sensitive student data.
+> **Verifiable Accountability. Absolute Privacy.**  
+> A privacy-centric decentralized application on the Midnight Network that allows educational institutions to manage disciplinary records without compromising student identity.
 
----
-
-## 📖 Project Description
-
-The **Private Student Disciplinary Registry** is a blockchain-based smart contract built using the Midnight Compact language.
-
-Traditional school disciplinary systems are centralized and opaque. Records can be altered, lost, or exposed without proper authorization.
-
-This project introduces a **privacy-preserving on-chain registry** where:
-
-* Schools can record disciplinary actions securely.
-* Student records remain private.
-* Authorized institutions can verify records without full data exposure.
-
-It demonstrates how blockchain can be used for **trust + privacy + verifiability** in education systems.
+![SDR Dashboard](./public/screenshots/Screenshot%202026-02-15%20183029.png)
 
 ---
 
-## ⚙️ What It Does
+## 📖 Overview
 
-This smart contract enables:
+The **Private Student Disciplinary Registry** transforms traditional, centralized disciplinary systems into a **decentralized, privacy-preserving infrastructure**. Built on Midnight's **Compact** language, it ensures that while a student's history is immutable and verifiable, their personal data never leaves their local environment.
 
-1. **Student Registration**
+### The Problem
+Traditional records are either opaque or overly exposed. Sharing a "permanent record" often harms a student's future through bias or data leaks.
 
-   * Schools register students on-chain.
-   * Each student gets a private disciplinary counter.
-
-2. **Private Disciplinary Recording**
-
-   * Schools add disciplinary actions.
-   * The count updates privately on-chain.
-
-3. **Selective Disclosure Verification**
-
-   * Authorized institutions can verify a student’s disciplinary count.
-   * Full details remain private.
-   * Only the necessary information is revealed.
+### The Solution: Trust + Privacy
+SDR uses **Zero-Knowledge Proofs (ZKP)** to prove facts about a student's record (e.g., "This student has 0 serious incidents") without revealing the student's name or the specific details of the incidents to the public ledger.
 
 ---
 
-## ✨ Features
+## ✨ Key Features
 
-* 🔒 **Privacy First** – Student records are stored privately.
-* 📊 **Selective Disclosure** – Only summary data can be verified.
-* 🏫 **School-Controlled Entries** – Only authorized parties can add actions.
-* 🧾 **Tamper-Resistant** – On-chain integrity ensures records cannot be altered.
-* 🧑‍🎓 **Student-Centric** – Protects student identity and sensitive data.
-* 🧠 **Beginner-Friendly Contract Structure** – Simple and easy to understand.
-
----
-
-## 🏗️ Smart Contract Overview
-
-* Uses `Counter` for tracking disciplinary actions.
-* Maintains:
-
-  * A public student counter.
-  * A private map of student disciplinary records.
-* Follows Midnight’s `ledger` and `circuit` model.
+*   🔒 **Privacy by Design** – Student IDs are hashed locally. Only a cryptographic commitment is stored on-chain.
+*   🛡️ **ZK-Verified Queries** – Institutions verify student standing via Zero-Knowledge proofs.
+*   📊 **Dynamic Severity Status** – Records are automatically categorized (Clear, Warning, Critical) based on verifiable incident counts.
+*   ⚡ **Secure Proof Generation** – Real-time snark-proof execution directly in the browser.
+*   🏫 **Authorized Recording** – Only registered school wallets can sign incident updates.
 
 ---
 
-## 🚀 Deployed Smart Contract
+## 🛠️ Technology Stack
 
-**Contract Name:** `disciplinary.compact`  
-**Source File:** [`src/disciplinary.compact`](file:///d:/Projects/Midnight-full-stack/midnight-starter-template-windows/disciplinary-contract/src/disciplinary.compact)  
-**Contract Address:** `47e5aa756ebb75df1fa5feb6af40d0ac5ce24ef2fe683cfa7e467b3ee6d06585`  
-**Network:** `undeployed` (local)
+The project leverages a modern, privacy-first technical stack:
 
-> This contract is deployed on the Midnight network and demonstrates a minimal implementation of a privacy-preserving student disciplinary registry.
-
----
-
-## 💡 Why This Matters
-
-Educational institutions often need to share student disciplinary records with:
-
-* Other schools (transfers)
-* Universities
-* Scholarship committees
-
-But exposing full records can:
-
-* Violate privacy
-* Harm student futures
-* Create unnecessary bias
-
-This solution ensures:
-
-> ✔ Trust without overexposure
-> ✔ Verification without revealing full history
-> ✔ Privacy preserved by design
+*   **Midnight Network** – Decentralized blockchain with native Zero-Knowledge (ZK) capabilities.
+*   **Compact Language** – A specialized smart contract language designed for privacy-preserving circuits.
+*   **Vite + React (TypeScript)** – High-performance modular frontend architecture.
+*   **RxJS & Observables** – Reactive SDK layer for real-time contract state synchronization.
+*   **Framer Motion** – Premium micro-animations for ZK proof generation transparency.
+*   **Tailwind CSS** – Custom utility-first design system with privacy-focused UI patterns.
 
 ---
 
-## 🛠️ Built With
+## 🏗️ Project Structure
 
-* Midnight Compact Language
-* Compact Standard Library
-* Privacy-focused smart contract architecture
+The repository is organized as a monorepo for seamless full-stack dev-to-deploy experience:
+
+```text
+├── disciplinary-contract/    # Smart contract (Compact) logic and schema
+├── frontend-vite-react/      # React + Vite frontend application
+│   ├── src/modules/midnight/  
+│   │   ├── disciplinary-sdk/ # Custom SDK layer for ZK interactions
+│   │   └── wallet-widget/    # Midnight wallet integration components
+│   └── src/pages/             # UI Views (Dashboard, Records, Registration)
+├── counter-cli/              # Deployment & test script runner
+└── public/screenshots/       # Project visual documentation
+```
 
 ---
 
-## 📌 Future Improvements
+## 🧠 Smart Contract Internals
 
-* Role-based access control (School / Verifier roles)
-* Severity levels (minor / major offenses)
-* Multi-school registry
-* ZK-based proof verification instead of raw counters
-* Frontend dashboard for schools
+The `disciplinary.compact` contract is the backbone of the registry. It defines the privacy rules for student data.
+
+### Data Model
+*   **`ledger totalStudents: Counter`**: A public registry of the total number of students enrolled.
+*   **`ledger accounts: Map<Field, Uint<64>>`**: A private mapping of student commitments (hashes) to their disciplinary incident counts.
+
+### Core Circuits
+1.  **`registerStudent(studentId: Field)`**: 
+    - Increments global student counter.
+    - Creates a new entry in the `accounts` map using a `disclose(studentId)` hash.
+2.  **`addDisciplinaryAction(studentId: Field)`**: 
+    - Verifies student existence on-chain.
+    - Increments the private incident counter for that specific hashed ID.
+3.  **`verifyRecord(studentId: Field)`**: 
+    - A read-only circuit that proves knowledge of a student ID.
+    - Returns the current incident count without revealing the ID to the network.
+
+---
+
+## 📜 Deployed Contract
+
+*   **Contract Name:** `disciplinary.compact`
+*   **Source File:** [`disciplinary-contract/src/disciplinary.compact`](./disciplinary-contract/src/disciplinary.compact)
+*   **Contract Address:** `47e5aa756ebb75df1fa5feb6af40d0ac5ce24ef2fe683cfa7e467b3ee6d06585`
+*   **Network:** Midnight Testnet (Local / Dev)
+
+---
+
+## 🚶 How It Works
+
+### 1. Privacy-Preserving Registration
+When a student is added, the system generates a local hash. The blockchain only sees a **Commitment Hash**, ensuring the student's real identity remains anonymous to the network.
+
+![Registration Flow](./public/screenshots/Screenshot%202026-02-15%20183051.png)
+
+### 2. Zero-Knowledge Proof Generation
+Every interaction requiring a state change or a private query triggers a **ZK-SNARK proof**. This allows the Midnight Network to verify that the transaction follows the rules without seeing the private data (Student ID, private history) involved.
+
+![ZK Proof Modal](./public/screenshots/Screenshot%202026-02-15%20183059.png)
+
+### 3. Verification & Record Management
+The Records dashboard allows administrators to query a student's ID and retrieve a verified proof of their status. If an incident occurs, a new record can be added securely.
+
+![Records Dashboard](./public/screenshots/Screenshot%202026-02-15%20183137.png)
+
+---
+
+## 🚀 Getting Started
+
+1.  **Install Midnight Lace Wallet**: Required to sign ZK transactions.
+2.  **Enter Demo Mode**: If you don't have a testnet wallet, use the "Demo Mode" toggle in the app to see the simulated ZK flows.
+3.  **Register a Student**: Start by creating a private commitment on the Registration page.
+
+---
+
+## 📌 Roadmap & Future Improvements
+
+*   [ ] **Role-Based Access Control** – Specific "Verifying Institution" vs "School" roles.
+*   [ ] **Multi-School Registry** – Federated records across different educational districts.
+*   [ ] **Student Self-Proof** – Allow students to generate their own "Good Standing" proofs for third parties.
+*   [ ] **Encrypted Note Storage** – Storing full incident narratives in private, encrypted sidechains.
 
 ---
 
 ## 🤝 Contributing
 
-This is a beginner-friendly educational project.
-Feel free to fork, experiment, and improve!
+This is a developer-focused template for privacy-preserving applications. Contributions to the contract logic or the UX patterns are welcome.
 
 ---
 
 ## 📜 License
 
 Apache 2.0
-
----

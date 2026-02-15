@@ -1,0 +1,34 @@
+
+> @eddalabs/counter-cli@0.1.0 typecheck
+> tsc -p tsconfig.json --noEmit
+
+src/cli.ts(6,15): error TS2305: Module '"./common-types"' has no exported member 'CounterProviders'.
+src/cli.ts(6,38): error TS2305: Module '"./common-types"' has no exported member 'DeployedCounterContract'.
+src/cli.ts(128,28): error TS2339: Property 'getDustBalance' does not exist on type 'typeof import("D:/Projects/Midnight-full-stack/midnight-starter-template-windows/counter-cli/src/api")'.
+src/cli.ts(149,13): error TS2339: Property 'monitorDustBalance' does not exist on type 'typeof import("D:/Projects/Midnight-full-stack/midnight-starter-template-windows/counter-cli/src/api")'.
+src/cli.ts(169,37): error TS2353: Object literal may only specify known properties, and 'privateCounter' does not exist in type 'DisciplinaryRecordPrivateState'.
+src/cli.ts(231,66): error TS2339: Property 'increment' does not exist on type 'typeof import("D:/Projects/Midnight-full-stack/midnight-starter-template-windows/counter-cli/src/api")'.
+src/cli.ts(238,19): error TS2339: Property 'displayCounterValue' does not exist on type 'typeof import("D:/Projects/Midnight-full-stack/midnight-starter-template-windows/counter-cli/src/api")'.
+src/test/counter.test.ts(3,15): error TS2305: Module '"../common-types"' has no exported member 'CounterProviders'.
+src/test/counter.test.ts(44,67): error TS2353: Object literal may only specify known properties, and 'privateCounter' does not exist in type 'DisciplinaryRecordPrivateState'.
+src/test/counter.test.ts(47,31): error TS2339: Property 'displayCounterValue' does not exist on type 'typeof import("D:/Projects/Midnight-full-stack/midnight-starter-template-windows/counter-cli/src/api")'.
+src/test/counter.test.ts(51,32): error TS2339: Property 'increment' does not exist on type 'typeof import("D:/Projects/Midnight-full-stack/midnight-starter-template-windows/counter-cli/src/api")'.
+src/test/counter.test.ts(70,36): error TS2339: Property 'displayCounterValue' does not exist on type 'typeof import("D:/Projects/Midnight-full-stack/midnight-starter-template-windows/counter-cli/src/api")'.
+src/test/private-provider.test.ts(3,15): error TS2305: Module '"../common-types"' has no exported member 'CounterProviders'.
+src/test/public-provider.test.ts(3,15): error TS2305: Module '"../common-types"' has no exported member 'CounterProviders'.
+src/test/public-provider.test.ts(11,25): error TS2307: Cannot find module '@eddalabs/counter-contract' or its corresponding type declarations.
+src/test/public-provider.test.ts(38,67): error TS2353: Object literal may only specify known properties, and 'privateCounter' does not exist in type 'DisciplinaryRecordPrivateState'.
+src/test/public-provider.test.ts(40,32): error TS2339: Property 'increment' does not exist on type 'typeof import("D:/Projects/Midnight-full-stack/midnight-starter-template-windows/counter-cli/src/api")'.
+src/test/public-provider.test.ts(46,34): error TS18046: 'rawState1' is of type 'unknown'.
+src/test/wallet.test.ts(3,15): error TS2305: Module '"../common-types"' has no exported member 'CounterProviders'.
+src/test/wallet.test.ts(12,25): error TS2307: Cannot find module '@eddalabs/counter-contract' or its corresponding type declarations.
+src/test/zk-provider.test.ts(3,15): error TS2305: Module '"../common-types"' has no exported member 'CounterProviders'.
+src/test/zk-provider.test.ts(3,33): error TS2305: Module '"../common-types"' has no exported member 'CounterCircuits'.
+src/test/zk-provider.test.ts(11,25): error TS2307: Cannot find module '@eddalabs/counter-contract' or its corresponding type declarations.
+npm error Lifecycle script `typecheck` failed with error:
+npm error code 2
+npm error path D:\Projects\Midnight-full-stack\midnight-starter-template-windows\counter-cli
+npm error workspace @eddalabs/counter-cli@0.1.0
+npm error location D:\Projects\Midnight-full-stack\midnight-starter-template-windows\counter-cli
+npm error command failed
+npm error command C:\WINDOWS\system32\cmd.exe /d /s /c tsc -p tsconfig.json --noEmit

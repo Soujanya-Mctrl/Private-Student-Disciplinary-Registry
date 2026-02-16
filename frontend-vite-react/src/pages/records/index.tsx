@@ -1,6 +1,17 @@
 import React, { useState } from 'react';
 import { toast } from 'sonner';
-import { ClipboardList, ShieldAlert, Search, Users, Shield, AlertTriangle, CheckCircle2, Plus, ShieldCheck, Loader2 } from 'lucide-react';
+import { 
+  ClipboardList, 
+  ShieldAlert, 
+  Search, 
+  Users, 
+  Shield, 
+  AlertTriangle, 
+  CheckCircle2, 
+  Plus, 
+  ShieldCheck, 
+  Loader2 
+} from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,6 +22,7 @@ import { PreSubmissionPanel } from '@/components/ui/pre-submission-panel';
 import { ZkProofModal } from '@/components/ui/zk-proof-modal';
 import { WalletGuard } from '@/components/wallet-guard';
 import { useContractSubscription } from '@/modules/midnight/disciplinary-sdk/hooks/use-contract-subscription';
+import { useDemoMode } from '@/contexts/demo-mode';
 import { hashStudentId } from '@/modules/midnight/common-utils/hashing';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -60,6 +72,7 @@ type ProofState = 'idle' | 'generatingProof' | 'submitting' | 'confirmed' | 'err
 
 export function Records() {
   const { deployedContractAPI, derivedState } = useContractSubscription();
+  const { isDemoMode } = useDemoMode();
   const [searchTerm, setSearchTerm] = useState('');
   const [showZkModal, setShowZkModal] = useState(false);
   
@@ -143,10 +156,10 @@ export function Records() {
   };
 
   const handleAddAction = async (student: VerifiedStudent) => {
-    if (!deployedContractAPI) {
-      // Demo Mode Fallback
+    if (isDemoMode) {
+      // Demo Mode logic
       setShowZkModal(true);
-      await new Promise(r => setTimeout(r, 3000)); // Simulate proof
+      await new Promise(r => setTimeout(r, 2000));
       
       setVerifiedStudents((prev) =>
         prev.map((s) => s.id === student.id ? { ...s, recordCount: s.recordCount + 1 } : s)
@@ -158,16 +171,24 @@ export function Records() {
       setDescription('');
       return;
     }
+
+    if (!deployedContractAPI) {
+      toast.error('Contract connection not ready. Please wait or refresh the page.');
+      return;
+    }
+
     setShowZkModal(true);
-    
     try {
-      // 1. Add action on-chain (increments counter)
-      await deployedContractAPI.addDisciplinaryAction(BigInt(student.hash));
+      // 1. Prepare reason hash (SHA-256 -> Field)
+      const encoder = new TextEncoder();
+      const reasonBuffer = await window.crypto.subtle.digest('SHA-256', encoder.encode(description));
+      const reasonHash = BigInt('0x' + Array.from(new Uint8Array(reasonBuffer)).slice(0, 31).map(b => b.toString(16).padStart(2, '0')).join(''));
+
+      // 2. Add action on-chain (increments counter + stores reason hash)
+      await deployedContractAPI.addDisciplinaryAction(BigInt(student.hash), reasonHash);
 
       // 2. Prepare commitment hash (simple hash of details for now)
-      // In a real system, this should match an on-chain commitment
       const commitmentData = JSON.stringify({ description, severity, year: new Date().getFullYear() });
-      const encoder = new TextEncoder();
       const commitmentBuffer = await window.crypto.subtle.digest('SHA-256', encoder.encode(commitmentData));
       const commitmentHash = Array.from(new Uint8Array(commitmentBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
 
@@ -207,7 +228,12 @@ export function Records() {
     } catch (error) {
       console.error('Failed to add action:', error);
       setShowZkModal(false);
-      toast.error('Action failed. Your data was NOT transmitted anywhere.');
+
+      if (derivedState && derivedState.managerId !== derivedState.currentHashedAddress) {
+        toast.error('Action failed: You are not the on-chain admin (Deployer Wallet).');
+      } else {
+        toast.error('Action failed. Your data was NOT transmitted anywhere.');
+      }
     }
   };
 
@@ -428,11 +454,36 @@ export function Records() {
                                             <SelectValue placeholder="Select severity" />
                                           </SelectTrigger>
                                           <SelectContent>
-                                            <SelectItem value="1">1 - Minor (Warning)</SelectItem>
-                                            <SelectItem value="2">2 - Moderate (Correction)</SelectItem>
-                                            <SelectItem value="3">3 - Serious (Probation)</SelectItem>
-                                            <SelectItem value="4">4 - Severe (Suspension)</SelectItem>
-                                            <SelectItem value="5">5 - Critical (Expulsion)</SelectItem>
+                                            <SelectItem value="1">
+                                              <div className="flex items-center gap-2">
+                                                <div className="h-2 w-2 rounded-full" style={{ background: 'var(--success)' }} />
+                                                <span>Level 1 - Minor Warning</span>
+                                              </div>
+                                            </SelectItem>
+                                            <SelectItem value="2">
+                                              <div className="flex items-center gap-2">
+                                                <div className="h-2 w-2 rounded-full" style={{ background: 'var(--zk-accent)' }} />
+                                                <span>Level 2 - Moderate Action</span>
+                                              </div>
+                                            </SelectItem>
+                                            <SelectItem value="3">
+                                              <div className="flex items-center gap-2">
+                                                <div className="h-2 w-2 rounded-full" style={{ background: 'var(--warning)' }} />
+                                                <span>Level 3 - Serious Probation</span>
+                                              </div>
+                                            </SelectItem>
+                                            <SelectItem value="4">
+                                              <div className="flex items-center gap-2">
+                                                <div className="h-2 w-2 rounded-full" style={{ background: 'var(--danger)' }} />
+                                                <span>Level 4 - Severe Suspension</span>
+                                              </div>
+                                            </SelectItem>
+                                            <SelectItem value="5">
+                                              <div className="flex items-center gap-2">
+                                                <div className="h-2 w-2 rounded-full badge-dot-pulse" style={{ background: 'var(--danger)' }} />
+                                                <span className="font-bold">Level 5 - Critical Expulsion</span>
+                                              </div>
+                                            </SelectItem>
                                           </SelectContent>
                                         </Select>
                                       </div>

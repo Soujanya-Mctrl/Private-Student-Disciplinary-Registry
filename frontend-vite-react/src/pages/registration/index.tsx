@@ -8,12 +8,14 @@ import { PreSubmissionPanel } from '@/components/ui/pre-submission-panel';
 import { ZkProofModal } from '@/components/ui/zk-proof-modal';
 import { WalletGuard } from '@/components/wallet-guard';
 import { useContractSubscription } from '@/modules/midnight/disciplinary-sdk/hooks/use-contract-subscription';
+import { useDemoMode } from '@/contexts/demo-mode';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { hashStudentId } from '@/modules/midnight/common-utils/hashing';
 
 export function Registration() {
   const { deployedContractAPI } = useContractSubscription();
+  const { isDemoMode } = useDemoMode();
   const [studentId, setStudentId] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
   const [showZkModal, setShowZkModal] = useState(false);
@@ -22,7 +24,7 @@ export function Registration() {
   const handleRegister = async () => {
     if (!studentId) return;
     
-    if (!deployedContractAPI) {
+    if (isDemoMode) {
       // Demo Mode Fallback
       setShowZkModal(true);
       setIsRegistering(true);
@@ -32,6 +34,11 @@ export function Registration() {
       setShowZkModal(false);
       toast.success('Demo: Student registered (Simulated)');
       setStudentId('');
+      return;
+    }
+
+    if (!deployedContractAPI) {
+      toast.error('Contract connection not ready. Please wait or refresh the page.');
       return;
     }
     setShowPreview(false);

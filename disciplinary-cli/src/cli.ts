@@ -20,8 +20,8 @@ const GENESIS_MINT_WALLET_SEED = '0000000000000000000000000000000000000000000000
 const BANNER = `
 ╔══════════════════════════════════════════════════════════════╗
 ║                                                              ║
-║              Midnight Counter Example                        ║
-║              ─────────────────────                           ║
+║              Midnight Student Registry                        ║
+║              ─────────────────────────                       ║
 ║              A privacy-preserving smart contract demo        ║
 ║                                                              ║
 ╚══════════════════════════════════════════════════════════════╝
@@ -48,21 +48,22 @@ const contractMenu = (dustBalance: string) => `
 ${DIVIDER}
   Contract Actions${dustBalance ? `                    DUST: ${dustBalance}` : ''}
 ${DIVIDER}
-  [1] Deploy a new counter contract
-  [2] Join an existing counter contract
+  [1] Deploy a new Registry contract
+  [2] Join an existing Registry contract
   [3] Monitor DUST balance
   [4] Exit
 ${'─'.repeat(62)}
 > `;
 
-/** Build the counter actions menu, showing current DUST balance in the header. */
-const counterMenu = (dustBalance: string) => `
+/** Build the registry actions menu, showing current DUST balance in the header. */
+const registryMenu = (dustBalance: string) => `
 ${DIVIDER}
-  Counter Actions${dustBalance ? `                     DUST: ${dustBalance}` : ''}
+  Registry Actions${dustBalance ? `                     DUST: ${dustBalance}` : ''}
 ${DIVIDER}
-  [1] Increment counter
-  [2] Display current counter value
-  [3] Exit
+  [1] Register Student
+  [2] Add Incident Record
+  [3] Display total students
+  [4] Exit
 ${'─'.repeat(62)}
 > `;
 
@@ -165,8 +166,8 @@ const deployOrJoin = async (
     switch (choice.trim()) {
       case '1':
         try {
-          const contract = await api.withStatus('Deploying counter contract', () =>
-            api.deploy(providers, { privateCounter: 0 }),
+          const contract = await api.withStatus('Deploying Registry contract', () =>
+            api.deploy(providers, api.createPrivateState()),
           );
           console.log(`  Contract deployed at: ${contract.deployTxData.public.contractAddress}\n`);
           return contract;
@@ -224,20 +225,18 @@ const mainLoop = async (providers: CounterProviders, walletCtx: api.WalletContex
 
   while (true) {
     const dustLabel = await getDustLabel(walletCtx.wallet);
-    const choice = await rli.question(counterMenu(dustLabel));
+    const choice = await rli.question(registryMenu(dustLabel));
     switch (choice.trim()) {
       case '1':
-        try {
-          await api.withStatus('Incrementing counter', () => api.increment(counterContract));
-        } catch (e) {
-          const msg = e instanceof Error ? e.message : String(e);
-          console.log(`  ✗ Increment failed: ${msg}\n`);
-        }
+        console.log('  [Placeholder] Student registration should be done via Frontend or specialized CLI command.');
         break;
       case '2':
-        await api.displayCounterValue(providers, counterContract);
+        console.log('  [Placeholder] Adding incident record should be done via Frontend or specialized CLI command.');
         break;
       case '3':
+        console.log('  Total Students: [Currently only viewable via Frontend or Ledger query]');
+        break;
+      case '4':
         return;
       default:
         console.log(`  Invalid choice: ${choice}`);

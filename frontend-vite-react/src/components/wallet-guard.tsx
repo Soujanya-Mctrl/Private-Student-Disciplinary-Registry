@@ -2,8 +2,8 @@ import { Shield, Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useWallet } from '@/modules/midnight/wallet-widget/hooks/useWallet';
+import { useDemoMode } from '@/contexts/demo-mode';
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 
 interface WalletGuardProps {
@@ -12,13 +12,7 @@ interface WalletGuardProps {
 
 export function WalletGuard({ children }: WalletGuardProps) {
   const { connectedAPI, setOpen } = useWallet();
-  const [isDemoMode, setIsDemoMode] = useState(false);
-
-  useEffect(() => {
-    const handleDemo = () => setIsDemoMode(true);
-    window.addEventListener('midnight:demo_mode', handleDemo);
-    return () => window.removeEventListener('midnight:demo_mode', handleDemo);
-  }, []);
+  const { isDemoMode, setIsDemoMode } = useDemoMode();
 
   // If we have a connectedAPI or are in demo mode, the wallet is connected/bypassed
   if (connectedAPI || isDemoMode) {
@@ -70,9 +64,7 @@ export function WalletGuard({ children }: WalletGuardProps) {
               variant="outline"
               className="w-full border-dashed"
               onClick={() => {
-                // Mock bypass: We just return the children by tricking the state
-                // In a real app we'd use a more formal mock provider
-                window.dispatchEvent(new CustomEvent('midnight:demo_mode', { detail: true }));
+                setIsDemoMode(true);
                 toast.info("Demo Mode activated — showing mock data.");
               }}
             >

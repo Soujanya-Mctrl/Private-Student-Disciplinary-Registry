@@ -1,6 +1,6 @@
 import { createContext, useMemo } from 'react';
 import { type Logger } from 'pino';
-import { LocalStorage, LocalStorageProps } from './counter-localStorage-class';
+import { LocalStorage, LocalStorageProps } from './disciplinary-localStorage-class';
 
 export const LocalStorageContext = createContext<LocalStorageProps | undefined>(undefined);
 

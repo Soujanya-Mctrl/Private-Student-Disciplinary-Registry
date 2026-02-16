@@ -2,7 +2,9 @@ import { Link, useRouterState } from '@tanstack/react-router';
 import { ReactNode } from 'react';
 import { LayoutDashboard, UserPlus, ClipboardList, Shield, Wallet } from 'lucide-react';
 import { ModeToggle } from '@/components/mode-toggle';
-import { motion } from 'framer-motion';
+import { Switch } from '@/components/ui/switch';
+import { useDemoMode } from '@/contexts/demo-mode';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -15,11 +17,12 @@ const navItems = [
   { label: 'Wallet', path: '/wallet-ui', icon: Wallet },
 ];
 
-export const MainLayout = ({ children }: MainLayoutProps) => {
-  const routerState = useRouterState();
-  const currentPath = routerState.location.pathname;
-
-  return (
+    export const MainLayout = ({ children }: MainLayoutProps) => {
+      const routerState = useRouterState();
+      const currentPath = routerState.location.pathname;
+      const { isDemoMode, setIsDemoMode } = useDemoMode();
+    
+      return (
     <div className="min-h-screen flex bg-background">
       {/* ──── Sidebar ──── */}
       <aside
@@ -99,10 +102,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
             <p className="px-3 mb-2 text-[10px] uppercase tracking-widest font-semibold" style={{ color: 'var(--muted-foreground)' }}>
               Privacy
             </p>
-            <motion.div
-              whileHover={{ scale: 1.03, y: -1 }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            <div
               className="mx-3 rounded-lg p-3 text-xs cursor-default"
               style={{ background: 'var(--privacy-tint)', border: '1px solid var(--privacy-border)' }}
             >
@@ -113,7 +113,41 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
               <p style={{ color: 'var(--muted-foreground)' }}>
                 All student data is processed locally using ZK proofs.
               </p>
-            </motion.div>
+            </div>
+          </div>
+
+          <div className="!mt-auto pt-6 px-3">
+            <div 
+              className="rounded-xl p-4 space-y-3 transition-all duration-300"
+              style={{ 
+                background: 'var(--sidebar-accent)', 
+                border: '1px solid var(--sidebar-border)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+              }}
+            >
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-primary">Demo Mode</p>
+                  <p className="text-[10px] text-muted-foreground">Mock ZK data</p>
+                </div>
+                <Switch 
+                  checked={isDemoMode}
+                  onCheckedChange={setIsDemoMode}
+                />
+              </div>
+              <AnimatePresence>
+                {isDemoMode && (
+                  <motion.p
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="text-[9px] leading-relaxed text-amber-600 dark:text-amber-400 font-medium italic"
+                  >
+                    Note: Transactions are simulated in this mode.
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </nav>
 

@@ -263,7 +263,7 @@ async function main() {
   setNetworkId(NETWORK_ID);
 
   console.log('\n╔══════════════════════════════════════════════════════════╗');
-  console.log('║           Counter Contract Deploy Script                ║');
+  console.log('║           Disciplinary Contract Deploy Script           ║');
   console.log(`║           Network: ${NETWORK_ID.padEnd(38)}║`);
   console.log('╚══════════════════════════════════════════════════════════╝\n');
 

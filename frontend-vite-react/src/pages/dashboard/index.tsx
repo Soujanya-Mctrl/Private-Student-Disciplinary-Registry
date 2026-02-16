@@ -3,6 +3,7 @@ import { Users, ShieldAlert, UserPlus, ClipboardList, Shield, ArrowRight, Lock, 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useContractSubscription } from '@/modules/midnight/disciplinary-sdk/hooks/use-contract-subscription';
+import { useDemoMode } from '@/contexts/demo-mode';
 import { motion } from 'framer-motion';
 
 // Animation variants
@@ -25,27 +26,30 @@ const scaleIn = {
 export function Dashboard() {
   const navigate = useNavigate();
   const { derivedState } = useContractSubscription();
+  const { isDemoMode } = useDemoMode();
 
   const stats = [
     {
       title: 'Total Students',
-      value: (Number(derivedState?.totalStudents || 0n) + 12).toString(),
-      description: 'Registered on-chain',
+      value: isDemoMode 
+        ? '15' 
+        : (derivedState?.totalStudents || 0n).toString(),
+      description: isDemoMode ? 'Mock registered students' : 'Registered on-chain',
       icon: <Users className="h-5 w-5" />,
       color: 'var(--primary)',
       tint: 'var(--privacy-tint)',
     },
     {
-      title: 'Disciplinary Actions',
-      value: '24',
-      description: 'Privacy-preserving records',
+      title: 'System Health',
+      value: 'Online',
+      description: 'Zero-knowledge node active',
       icon: <ShieldAlert className="h-5 w-5" />,
-      color: 'var(--warning)',
-      tint: 'var(--warning-tint)',
+      color: 'var(--success)',
+      tint: 'var(--success-tint)',
     },
     {
       title: 'ZK Verified',
-      value: '158',
+      value: isDemoMode ? '124' : '0',
       description: 'Proof-verified queries',
       icon: <Shield className="h-5 w-5" />,
       color: 'var(--zk-accent)',

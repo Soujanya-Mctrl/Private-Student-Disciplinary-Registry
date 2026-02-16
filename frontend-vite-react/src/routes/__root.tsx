@@ -4,6 +4,9 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { MidnightMeshProvider } from "@/modules/midnight/wallet-widget/contexts/wallet";
 import { DisciplinaryAppProvider } from '../modules/midnight/disciplinary-sdk/contexts';
 import { MainLayout } from "@/layouts/layout";
+import { DemoModeProvider } from "@/contexts/demo-mode";
+
+import { MidnightWallet } from "@/modules/midnight/wallet-widget/ui/midnightWallet";
 
 export const logger = pino.pino({
   level: "trace",
@@ -19,13 +22,16 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-      <MidnightMeshProvider logger={logger}>
-        <DisciplinaryAppProvider logger={logger} contractAddress={contractAddress}>
-          <MainLayout>
-            <Outlet />
-          </MainLayout>          
-        </DisciplinaryAppProvider>
-      </MidnightMeshProvider>
+      <DemoModeProvider>
+        <MidnightMeshProvider logger={logger}>
+          <DisciplinaryAppProvider logger={logger} contractAddress={contractAddress}>
+            <MainLayout>
+              <Outlet />
+            </MainLayout>
+            <MidnightWallet />
+          </DisciplinaryAppProvider>
+        </MidnightMeshProvider>
+      </DemoModeProvider>
     </ThemeProvider>
   );
 }

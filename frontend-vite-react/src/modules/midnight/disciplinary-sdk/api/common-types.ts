@@ -22,12 +22,18 @@ export type UserAction = {
 
 export type DerivedState = {
   readonly totalStudents: bigint;
+  readonly managerId: bigint;
+  readonly isAdmin: boolean;
+  readonly currentHashedAddress: bigint;
   readonly privateState: DisciplinaryRecordPrivateState;
   readonly turns: UserAction;
 };
 
 export const emptyState: DerivedState = {
   totalStudents: 0n,
+  managerId: 0n,
+  isAdmin: false,
+  currentHashedAddress: 0n,
   privateState: createPrivateState(),
   turns: { register: undefined, addAction: undefined, verify: undefined },
 };

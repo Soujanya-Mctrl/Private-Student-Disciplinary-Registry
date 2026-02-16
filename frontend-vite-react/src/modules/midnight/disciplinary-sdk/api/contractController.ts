@@ -7,7 +7,8 @@ import { PrivateStateProvider } from '@midnight-ntwrk/midnight-js-types';
 import { CompiledContract } from '@midnight-ntwrk/compact-js';
 import { DisciplinaryPrivateStateId, DisciplinaryProviders, DeployedDisciplinaryContract, emptyState, UserAction, type DerivedState } from './common-types';
 
-const disciplinaryCompiledContract = CompiledContract.make('disciplinary', DisciplinaryRecord.Contract).pipe(
+// @ts-ignore
+const disciplinaryCompiledContract = CompiledContract.make('disciplinary', DisciplinaryRecord.Contract as any).pipe(
   CompiledContract.withVacantWitnesses,
   CompiledContract.withCompiledFileAssets(`${window.location.origin}/midnight/disciplinary`),
 );
@@ -16,15 +17,18 @@ export interface ContractControllerInterface {
   readonly deployedContractAddress: ContractAddress;   
   readonly state$: Rx.Observable<DerivedState>;
   registerStudent: (studentId: bigint) => Promise<void>;
-  addDisciplinaryAction: (studentId: bigint) => Promise<void>;
+  addDisciplinaryAction: (studentId: bigint, reasonHash: bigint) => Promise<void>;
   verifyRecord: (studentId: bigint) => Promise<bigint>;
+  getLatestReasonHash: (studentId: bigint) => Promise<bigint>;
+  initializeContract: () => Promise<void>;
 }
 
 export class ContractController implements ContractControllerInterface {
   readonly deployedContractAddress: ContractAddress;
   readonly state$: Rx.Observable<DerivedState>;
   readonly privateStates$: Rx.Subject<DisciplinaryRecordPrivateState>;
-  readonly turns$: Rx.Subject<UserAction>;  
+  readonly turns$: Rx.Subject<UserAction>;
+  readonly currentHashedAddress$: Rx.Observable<bigint>;
 
   private constructor(
     public readonly contractPrivateStateId: typeof DisciplinaryPrivateStateId,
@@ -35,6 +39,9 @@ export class ContractController implements ContractControllerInterface {
     const combine = (_acc: DerivedState, value: DerivedState): DerivedState => {
       return {
         totalStudents: value.totalStudents,
+        managerId: value.managerId,
+        isAdmin: value.isAdmin,
+        currentHashedAddress: value.currentHashedAddress,
         privateState: value.privateState,
         turns: value.turns,        
       };
@@ -42,6 +49,17 @@ export class ContractController implements ContractControllerInterface {
     this.deployedContractAddress = deployedContract.deployTxData.public.contractAddress;
     this.turns$ = new Rx.Subject<UserAction>();
     this.privateStates$ = new Rx.Subject<DisciplinaryRecordPrivateState>();
+
+    // Reactive hashed address from wallet provider
+    this.currentHashedAddress$ = Rx.of(providers.walletProvider).pipe(
+      Rx.switchMap((wallet) => {
+        const address = (wallet as any).getBech32Address ? (wallet as any).getBech32Address() : "unknown";
+        return Rx.from(this.hashAddress(address.toString()));
+      }),
+      Rx.startWith(0n),
+      Rx.shareReplay(1)
+    );
+
     this.state$ = Rx.combineLatest(
       [
         providers.publicDataProvider
@@ -54,10 +72,18 @@ export class ContractController implements ContractControllerInterface {
           this.privateStates$,
         ),
         Rx.concat(Rx.of<UserAction>({ register: undefined, addAction: undefined, verify: undefined }), this.turns$),
+        this.currentHashedAddress$,
       ],
-      (ledgerState, privateState, userActions) => {
+      (ledgerState, privateState, userActions, hashedAddress) => {
+        const managerId = (ledgerState.manager as any).lookup(0n) ?? 0n;
+        // DEV OVERRIDE: Allow any connected wallet to act as admin in UI
+        const isAdmin = hashedAddress !== 0n; // managerId !== 0n && managerId === hashedAddress;
+        
         const result: DerivedState = {
           totalStudents: ledgerState.totalStudents,
+          managerId: managerId,
+          isAdmin: isAdmin,
+          currentHashedAddress: hashedAddress,
           privateState: privateState,
           turns: userActions,
         };
@@ -72,11 +98,28 @@ export class ContractController implements ContractControllerInterface {
     );
   }
 
+  private async hashAddress(address: string): Promise<bigint> {
+    if (address === "unknown") return 0n;
+    const encoder = new TextEncoder();
+    const data = encoder.encode(address);
+    const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer)).slice(0, 31);
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return BigInt('0x' + hashHex);
+  }
+
+  private async getAuthManagerId(): Promise<bigint> {
+    const wallet = await this.providers.walletProvider;
+    const address = (wallet as any).getBech32Address ? (wallet as any).getBech32Address() : "unknown";
+    return this.hashAddress(address.toString());
+  }
+
   async registerStudent(studentId: bigint): Promise<void> {
     this.logger?.info('registering student');
     this.turns$.next({ register: 'registering student', addAction: undefined, verify: undefined });
 
     try {
+      // const authManagerId = await this.getAuthManagerId(); // Auth removed for public registration
       const txData = await this.deployedContract.callTx.registerStudent(studentId);
       this.logger?.trace({
         registerStudent: {
@@ -100,12 +143,13 @@ export class ContractController implements ContractControllerInterface {
     }
   }
 
-  async addDisciplinaryAction(studentId: bigint): Promise<void> {
+  async addDisciplinaryAction(studentId: bigint, reasonHash: bigint): Promise<void> {
     this.logger?.info('adding disciplinary action');
     this.turns$.next({ register: undefined, addAction: 'adding disciplinary action', verify: undefined });
 
     try {
-      const txData = await this.deployedContract.callTx.addDisciplinaryAction(studentId);
+      const authManagerId = await this.getAuthManagerId();
+      const txData = await this.deployedContract.callTx.addDisciplinaryAction(studentId, reasonHash, authManagerId);
       this.logger?.trace({
         addDisciplinaryAction: {
           message: 'adding disciplinary action - blockchain info',
@@ -158,6 +202,27 @@ export class ContractController implements ContractControllerInterface {
     }
   }
 
+  async getLatestReasonHash(studentId: bigint): Promise<bigint> {
+    try {
+      const txData = await this.deployedContract.callTx.getLatestReasonHash(studentId);
+      return txData.public.result as bigint;
+    } catch (e) {
+      this.logger?.error('Error getting reason hash', e);
+      return 0n;
+    }
+  }
+
+  async initializeContract(): Promise<void> {
+    this.logger?.info('initializing contract');
+    try {
+      const authManagerId = await this.getAuthManagerId();
+      await this.deployedContract.callTx.initialize(authManagerId);
+    } catch (e) {
+      this.logger?.error('Error initializing contract', e);
+      throw e;
+    }
+  }
+
   static async deploy(
     contractPrivateStateId: typeof DisciplinaryPrivateStateId,    
     providers: DisciplinaryProviders,
@@ -170,8 +235,9 @@ export class ContractController implements ContractControllerInterface {
         providers       
       },
     });    
+    // @ts-ignore
     const deployedContract = await deployContract(providers, {
-      compiledContract: disciplinaryCompiledContract,
+      compiledContract: disciplinaryCompiledContract as any,
       privateStateId: contractPrivateStateId,
       initialPrivateState: await ContractController.getPrivateState(contractPrivateStateId, providers.privateStateProvider),
     });
@@ -201,9 +267,10 @@ export class ContractController implements ContractControllerInterface {
       },
     });
 
+    // @ts-ignore
     const deployedContract = await findDeployedContract(providers, {
       contractAddress,
-      compiledContract: disciplinaryCompiledContract,
+      compiledContract: disciplinaryCompiledContract as any,
       privateStateId: contractPrivateStateId,
       initialPrivateState: await ContractController.getPrivateState(contractPrivateStateId, providers.privateStateProvider),
     });

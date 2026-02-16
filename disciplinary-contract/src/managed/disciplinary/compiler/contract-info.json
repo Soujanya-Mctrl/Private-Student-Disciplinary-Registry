@@ -1,6 +1,23 @@
 {
   "circuits": [
     {
+      "name": "initialize",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "managerId",
+          "type": {
+            "type-name": "Field"
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
       "name": "registerStudent",
       "pure": false,
       "arguments": [
@@ -26,6 +43,18 @@
           "type": {
             "type-name": "Field"
           }
+        },
+        {
+          "name": "reasonHash",
+          "type": {
+            "type-name": "Field"
+          }
+        },
+        {
+          "name": "authManagerId",
+          "type": {
+            "type-name": "Field"
+          }
         }
       ],
       "result-type": {
@@ -48,6 +77,21 @@
       "result-type": {
         "type-name": "Uint",
         "maxval": 18446744073709551615
+      }
+    },
+    {
+      "name": "getLatestReasonHash",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "studentId",
+          "type": {
+            "type-name": "Field"
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Field"
       }
     }
   ],

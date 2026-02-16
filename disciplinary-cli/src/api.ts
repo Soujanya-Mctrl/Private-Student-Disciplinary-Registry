@@ -12,8 +12,12 @@ import {
   type DeployedDisciplinaryContract,
 } from './common-types';
 import { type Config, contractConfig } from './config';
-// @ts-nocheck
-import { DisciplinaryRecord, type DisciplinaryRecordPrivateState } from '@eddalabs/disciplinary-record-contract';
+import {
+  DisciplinaryRecord,
+  type DisciplinaryRecordPrivateState,
+  createPrivateState
+} from '@eddalabs/disciplinary-record-contract';
+export { createPrivateState };
 
 import { type ContractAddress } from '@midnight-ntwrk/compact-runtime';
 import * as ledger from '@midnight-ntwrk/ledger-v7';
@@ -126,6 +130,15 @@ export const deploy = async (
   });
   logger.info(`Deployed contract at address: ${contract.deployTxData.public.contractAddress}`);
   return contract;
+};
+
+export const initialize = async (
+  contract: DeployedDisciplinaryContract,
+  managerId: bigint,
+): Promise<void> => {
+  logger.info(`Initializing contract with managerId: ${managerId}...`);
+  await contract.callTx.initialize(managerId);
+  logger.info('Contract initialized successfully.');
 };
 
 // Original helper functions for Wallet Setup
@@ -337,13 +350,20 @@ const registerForDustGeneration = async (
 };
 
 const printWalletSummary = (seed: string, state: any, unshieldedKeystore: UnshieldedKeystore) => {
-  const networkId = getNetworkId();
-  const unshieldedBalance = state.unshielded.balances[ledger.unshieldedToken().raw] ?? 0n;
-  const coinPubKey = ShieldedCoinPublicKey.fromHexString(state.shielded.coinPublicKey.toHexString());
-  const encPubKey = ShieldedEncryptionPublicKey.fromHexString(state.shielded.encryptionPublicKey.toHexString());
-  const shieldedAddress = MidnightBech32m.encode(networkId, new ShieldedAddress(coinPubKey, encPubKey)).toString();
-  const DIV = '──────────────────────────────────────────────────────────────';
-  console.log(`
+  try {
+    const networkId = getNetworkId();
+    const nativeTokenRaw = ledger.nativeToken().raw;
+    const unshieldedBalance = state.unshielded.balances[nativeTokenRaw] ?? 0n;
+    
+    // Safety check for public keys - might be strings or objects
+    const toHexStr = (key: any) => typeof key === 'string' ? key : key.toHexString();
+    
+    const coinPubKey = ShieldedCoinPublicKey.fromHexString(toHexStr(state.shielded.coinPublicKey));
+    const encPubKey = ShieldedEncryptionPublicKey.fromHexString(toHexStr(state.shielded.encryptionPublicKey));
+    const shieldedAddress = MidnightBech32m.encode(networkId, new ShieldedAddress(coinPubKey, encPubKey)).toString();
+    
+    const DIV = '──────────────────────────────────────────────────────────────';
+    console.log(`
 ${DIV}
   Wallet Overview                            Network: ${networkId}
 ${DIV}
@@ -357,6 +377,10 @@ ${DIV}
   Dust
   └─ Address: ${state.dust.dustAddress}
 ${DIV}`);
+  } catch (err) {
+    logger.error('Failed to print wallet summary', err);
+    console.warn('  ⚠️  Could not generate full wallet summary, but wallet is active.');
+  }
 };
 
 export const buildWalletAndWaitForFunds = async (config: Config, seed: string): Promise<WalletContext> => {
@@ -396,7 +420,7 @@ ${DIV}
 `);
   const syncedState = await withStatus('Syncing with network', () => waitForSync(wallet));
   printWalletSummary(seed, syncedState, unshieldedKeystore);
-  const balance = syncedState.unshielded.balances[ledger.unshieldedToken().raw] ?? 0n;
+  const balance = syncedState.unshielded.balances[ledger.nativeToken().raw] ?? 0n;
   if (balance === 0n) {
     const fundedBalance = await withStatus('Waiting for incoming tokens', () => waitForFunds(wallet));
     console.log(`    Balance: ${formatBalance(fundedBalance)} tNight\n`);

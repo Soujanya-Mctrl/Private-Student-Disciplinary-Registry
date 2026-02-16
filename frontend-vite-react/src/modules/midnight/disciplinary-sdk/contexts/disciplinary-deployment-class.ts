@@ -5,7 +5,7 @@ import {
 import { type ContractAddress } from "@midnight-ntwrk/compact-runtime";
 import { BehaviorSubject } from "rxjs";
 import { type Logger } from "pino";
-import { type LocalStorageProps } from "./counter-localStorage-class";
+import { type LocalStorageProps } from "./disciplinary-localStorage-class";
 import {
   ContractController,
   ContractControllerInterface,

@@ -115,10 +115,16 @@ export const Provider = ({ children, logger }: ProviderProps) => {
   }, [status]);
 
   const proofProvider = useMemo(
-    () =>
-      serviceUriConfig?.proverServerUri && zkConfigProvider
-        ? proofClient(serviceUriConfig.proverServerUri, zkConfigProvider, providerCallback)
-        : noopProofClient(),
+    () => {
+      // Fallback to local proof server if wallet doesn't provide one (common in dev/testnet)
+      const proofServerUrl = serviceUriConfig?.proverServerUri || 'http://127.0.0.1:6300';
+      
+      if (zkConfigProvider && proofServerUrl) {
+         console.log('[Provider] Using Proof Server:', proofServerUrl);
+         return proofClient(proofServerUrl, zkConfigProvider, providerCallback);
+      }
+      return noopProofClient();
+    },
     [serviceUriConfig, zkConfigProvider, providerCallback, status]
   );
 

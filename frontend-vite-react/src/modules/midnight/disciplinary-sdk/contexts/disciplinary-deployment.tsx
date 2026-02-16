@@ -2,9 +2,9 @@ import type { PropsWithChildren } from 'react';
 import { createContext, useMemo } from 'react';
 import { type Logger } from 'pino';
 
-import type { DeployedAPIProvider } from './counter-deployment-class';
+import type { DeployedAPIProvider } from './disciplinary-deployment-class';
 import { useLocalState } from '../hooks/use-localStorage';
-import { DeployedDisciplinaryManager } from './counter-deployment-class';
+import { DeployedDisciplinaryManager } from './disciplinary-deployment-class';
 
 import { ContractAddress } from '@midnight-ntwrk/compact-runtime';
 import { useProviders } from '../hooks/use-providers';

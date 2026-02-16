@@ -60,7 +60,17 @@ async function deploy() {
   
   logger.info(`Contract deployed at: ${address}`);
 
-  // 5. Write deployment.json
+  // 5. Initialize Contract (Set Manager)
+  // We use the unshielded address as the Manager ID for authorization
+  const managerBech32 = walletContext.unshieldedKeystore.getBech32Address().toString();
+  // Simple hash-to-bigint for the Field using node:crypto
+  const crypto = await import('node:crypto');
+  const managerId = BigInt('0x' + crypto.createHash('sha256').update(managerBech32).digest('hex').slice(0, 62));
+  
+  await api.initialize(contract, managerId);
+  logger.info(`Contract initialized with Manager ID: ${managerId}`);
+
+  // 6. Write deployment.json
   const deploymentPath = path.resolve(currentDir, '..', '..', 'disciplinary-contract', 'deployment.json');
   const deploymentData = {
     contractAddress: address,

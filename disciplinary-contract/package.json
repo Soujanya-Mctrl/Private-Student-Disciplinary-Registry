@@ -18,7 +18,8 @@
     "compact": "wsl /home/user_linux/.local/bin/compact compile +0.28.0 src/disciplinary.compact src/managed/disciplinary",
     "compile": "npm run compact",
     "build": "tsc",
-    "deploy": "node dist/deploy.js"
+    "deploy": "node dist/deploy.js",
+    "fund": "node dist/fund.js"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-js": "2.4.0",

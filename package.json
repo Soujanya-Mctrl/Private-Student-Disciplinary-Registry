@@ -12,10 +12,7 @@
     "compact": "turbo run compact",
     "build": "turbo run build",
     "build-production": "git lfs pull && cd disciplinary-contract && npm run build && cd ../frontend-vite-react && npm run build",
-    "deploy": "cd disciplinary-cli && npm run deploy",    
-    "setup-standalone": "cd disciplinary-cli && npm run setup-undeployed",
-    "deploy-preprod": "cd disciplinary-cli && npm run deploy-preprod",
-    "dev:frontend": "cd frontend-vite-react && npm run dev",    
+    "dev": "turbo run dev",
     "lint": "turbo run lint"     
   },
   "engines": {

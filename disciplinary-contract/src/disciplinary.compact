@@ -4,20 +4,33 @@ import CompactStandardLibrary;
 
 export ledger totalStudents: Counter;
 export ledger accounts: Map<Field, Uint<64>>;
+export ledger reasons: Map<Field, Field>;
+export ledger manager: Map<Uint<64>, Field>;
+
+export circuit initialize(managerId: Field): [] {
+  manager.insert(0 as Uint<64>, disclose(managerId));
+}
 
 export circuit registerStudent(studentId: Field): [] {
   totalStudents.increment(1);
   accounts.insert(disclose(studentId), 0 as Uint<64>);
 }
 
-export circuit addDisciplinaryAction(studentId: Field): [] {
+export circuit addDisciplinaryAction(studentId: Field, reasonHash: Field, authManagerId: Field): [] {
+  assert(disclose(authManagerId) == manager.lookup(0 as Uint<64>), "Unauthorized");
   const disclosed_studentId = disclose(studentId);
   const current = accounts.lookup(disclosed_studentId);
   if (current < 1000) {
     accounts.insert(disclosed_studentId, (current + 1) as Uint<64>);
   }
+  reasons.insert(disclosed_studentId, disclose(reasonHash));
 }
 
 export circuit verifyRecord(studentId: Field): Uint<64> {
   return accounts.lookup(disclose(studentId));
 }
+
+export circuit getLatestReasonHash(studentId: Field): Field {
+  return reasons.lookup(disclose(studentId));
+}
+
